@@ -1976,7 +1976,7 @@ export default function ModernPortfolio() {
                     }`}>
                     <div className="flex justify-center">
                       <ReCAPTCHA
-                        sitekey="6LfJRaUrAAAAAMRlvaz_0Ef_tKqzVxgXKT3tfsBM"
+                        sitekey="6LdjR6krAAAAAFl75pae--QLAMqUBigqsJWwMdFU"
                         onChange={handleCaptcha}
                         theme={darkMode ? "dark" : "light"}
                       />
