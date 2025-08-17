@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import ReCAPTCHA from "react-google-recaptcha";
 import {
   SiReact,
   SiNodedotjs,
@@ -52,6 +53,7 @@ import {
   Award,
   Target
 } from 'lucide-react';
+
 const ThreeScene = ({ darkMode }) => {
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
@@ -113,7 +115,7 @@ const ThreeScene = ({ darkMode }) => {
 
     // ===== CENTRAL COMPUTING CORE =====
     const centralCore = new THREE.Group();
-    
+
     // Main glowing cube
     const coreGeometry = new THREE.BoxGeometry(4, 4, 4);
     const coreMaterial = new THREE.MeshPhongMaterial({
@@ -145,7 +147,7 @@ const ThreeScene = ({ darkMode }) => {
     for (let ring = 0; ring < 3; ring++) {
       const ringGroup = new THREE.Group();
       const radius = 8 + ring * 3;
-      
+
       for (let i = 0; i < 24; i++) {
         const angle = (i / 24) * Math.PI * 2;
         const binaryGeometry = new THREE.PlaneGeometry(0.5, 0.8);
@@ -155,17 +157,17 @@ const ThreeScene = ({ darkMode }) => {
           opacity: 0.6
         });
         const binaryMesh = new THREE.Mesh(binaryGeometry, binaryMaterial);
-        
+
         binaryMesh.position.set(
           Math.cos(angle) * radius,
           Math.sin(angle) * radius * 0.5,
           0
         );
         binaryMesh.lookAt(0, 0, 0);
-        
+
         ringGroup.add(binaryMesh);
       }
-      
+
       ringGroup.position.copy(centralCore.position);
       ringGroup.rotation.x = ring * 0.3;
       scene.add(ringGroup);
@@ -187,13 +189,13 @@ const ThreeScene = ({ darkMode }) => {
         opacity: 0.8
       });
       const node = new THREE.Mesh(nodeGeometry, nodeMaterial);
-      
+
       node.position.set(
         (Math.random() - 0.5) * 80,
         (Math.random() - 0.5) * 60,
         (Math.random() - 0.5) * 40
       );
-      
+
       nodes.push(node);
       neuralNetwork.add(node);
     }
@@ -201,23 +203,23 @@ const ThreeScene = ({ darkMode }) => {
     // Create connections between nodes
     for (let i = 0; i < nodes.length - 1; i++) {
       if (Math.random() > 0.6) continue; // Don't connect all nodes
-      
+
       const start = nodes[i].position;
       const end = nodes[i + 1].position;
       const distance = start.distanceTo(end);
-      
+
       const connectionGeometry = new THREE.BufferGeometry();
       connectionGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array([
         start.x, start.y, start.z,
         end.x, end.y, end.z
       ]), 3));
-      
+
       const connectionMaterial = new THREE.LineBasicMaterial({
         color: darkMode ? 0x00ffff : 0x0099cc,
         transparent: true,
         opacity: 0.3
       });
-      
+
       const connection = new THREE.Line(connectionGeometry, connectionMaterial);
       connections.push(connection);
       neuralNetwork.add(connection);
@@ -236,7 +238,7 @@ const ThreeScene = ({ darkMode }) => {
     for (let i = 0; i < 12; i++) {
       const shapeType = dsaShapes[Math.floor(Math.random() * dsaShapes.length)];
       let geometry;
-      
+
       switch (shapeType.type) {
         case 'cube':
           geometry = new THREE.BoxGeometry(shapeType.size, shapeType.size, shapeType.size);
@@ -250,7 +252,7 @@ const ThreeScene = ({ darkMode }) => {
       }
 
       const material = new THREE.MeshPhongMaterial({
-        color: darkMode ? 
+        color: darkMode ?
           [0x00ffff, 0xff00ff, 0xffff00][Math.floor(Math.random() * 3)] :
           [0x0099cc, 0x9900cc, 0xcccc00][Math.floor(Math.random() * 3)],
         transparent: true,
@@ -265,7 +267,7 @@ const ThreeScene = ({ darkMode }) => {
         (Math.random() - 0.5) * 80,
         (Math.random() - 0.5) * 60
       );
-      
+
       dataStructures.push({
         mesh,
         initialPosition: { ...mesh.position },
@@ -277,7 +279,7 @@ const ThreeScene = ({ darkMode }) => {
         floatSpeed: Math.random() * 0.015 + 0.01,
         floatRange: Math.random() * 6 + 2
       });
-      
+
       scene.add(mesh);
     }
 
@@ -292,7 +294,7 @@ const ThreeScene = ({ darkMode }) => {
         side: THREE.DoubleSide
       });
       const panel = new THREE.Mesh(panelGeometry, panelMaterial);
-      
+
       panel.position.set(
         (Math.random() - 0.5) * 100,
         (Math.random() - 0.5) * 60,
@@ -303,7 +305,7 @@ const ThreeScene = ({ darkMode }) => {
         Math.random() * Math.PI,
         Math.random() * Math.PI
       );
-      
+
       holoPanels.push({
         mesh: panel,
         rotationSpeed: {
@@ -312,7 +314,7 @@ const ThreeScene = ({ darkMode }) => {
           z: (Math.random() - 0.5) * 0.01
         }
       });
-      
+
       scene.add(panel);
     }
 
@@ -321,31 +323,31 @@ const ThreeScene = ({ darkMode }) => {
     const createShootingStar = () => {
       const starGeometry = new THREE.BufferGeometry();
       const positions = new Float32Array(6); // Two points for a line
-      
+
       const startX = (Math.random() - 0.5) * 200;
       const startY = (Math.random() - 0.5) * 100;
       const startZ = -100;
-      
+
       positions[0] = startX; positions[1] = startY; positions[2] = startZ;
       positions[3] = startX; positions[4] = startY; positions[5] = startZ;
-      
+
       starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      
+
       const starMaterial = new THREE.LineBasicMaterial({
         color: darkMode ? 0x00ffff : 0x0099cc,
         transparent: true,
         opacity: 0.8
       });
-      
+
       const shootingStar = new THREE.Line(starGeometry, starMaterial);
       scene.add(shootingStar);
-      
+
       shootingStars.push({
         mesh: shootingStar,
         startTime: Date.now(),
         duration: 2000,
         startPos: { x: startX, y: startY, z: startZ },
-        endPos: { 
+        endPos: {
           x: startX + (Math.random() - 0.5) * 40,
           y: startY + (Math.random() - 0.5) * 30,
           z: startZ + 60
@@ -400,7 +402,7 @@ const ThreeScene = ({ darkMode }) => {
       nodes.forEach((node, index) => {
         const pulseScale = 1 + Math.sin(time * 3 + index) * 0.2;
         node.scale.setScalar(pulseScale);
-        
+
         // Gentle floating
         node.position.y += Math.sin(time + index) * 0.02;
       });
@@ -412,9 +414,9 @@ const ThreeScene = ({ darkMode }) => {
         structure.mesh.rotation.z += structure.rotationSpeed.z;
 
         // Floating motion
-        structure.mesh.position.y = structure.initialPosition.y + 
+        structure.mesh.position.y = structure.initialPosition.y +
           Math.sin(time * structure.floatSpeed + index) * structure.floatRange;
-        structure.mesh.position.x = structure.initialPosition.x + 
+        structure.mesh.position.x = structure.initialPosition.x +
           Math.cos(time * structure.floatSpeed * 0.7 + index) * (structure.floatRange * 0.3);
       });
 
@@ -434,24 +436,24 @@ const ThreeScene = ({ darkMode }) => {
       shootingStars.forEach((star, index) => {
         const elapsed = Date.now() - star.startTime;
         const progress = Math.min(elapsed / star.duration, 1);
-        
+
         if (progress >= 1) {
           scene.remove(star.mesh);
           shootingStars.splice(index, 1);
           return;
         }
-        
+
         const currentPos = {
           x: star.startPos.x + (star.endPos.x - star.startPos.x) * progress,
           y: star.startPos.y + (star.endPos.y - star.startPos.y) * progress,
           z: star.startPos.z + (star.endPos.z - star.startPos.z) * progress
         };
-        
+
         const positions = star.mesh.geometry.attributes.position.array;
         positions[0] = star.startPos.x; positions[1] = star.startPos.y; positions[2] = star.startPos.z;
         positions[3] = currentPos.x; positions[4] = currentPos.y; positions[5] = currentPos.z;
         star.mesh.geometry.attributes.position.needsUpdate = true;
-        
+
         star.mesh.material.opacity = 0.8 * (1 - progress);
       });
 
@@ -461,7 +463,7 @@ const ThreeScene = ({ darkMode }) => {
       // Parallax camera movement
       const targetX = mouseRef.current.x * 8;
       const targetY = -mouseRef.current.y * 6;
-      
+
       camera.position.x += (targetX - camera.position.x) * 0.03;
       camera.position.y += (targetY - camera.position.y) * 0.03;
       camera.lookAt(0, 0, 0);
@@ -660,7 +662,10 @@ export default function ModernPortfolio() {
   const robotRef = useRef(null);
   const heroRef = useRef(null);
   const [robotPosition, setRobotPosition] = useState({ x: 50, y: 50 });
-
+  const [captchaValue, setCaptchaValue] = useState(null);
+  const handleCaptcha = (value) => {
+    setCaptchaValue(value);
+  };
   // Loading effect
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 3000);
@@ -1184,7 +1189,9 @@ export default function ModernPortfolio() {
                 <span>Get In Touch</span>
               </button>
               <button
-                onClick={() => scrollToSection('experience')}
+                onClick={() => {
+                  window.open('/resume/MD_Tanvir_hossain.pdf', '_blank');
+                }}
                 className={`relative px-8 py-3 border-2 border-cyan-400 rounded-full flex items-center space-x-2 overflow-hidden transition-all duration-300 hover:bg-white/10 hover:-translate-y-0.5 group cursor-pointer ${darkMode
                   ? 'border-2 border-cyan-400 text-white'
                   : 'border-2 border-cyan-400 text-cyan-600'
@@ -1904,7 +1911,14 @@ export default function ModernPortfolio() {
 
             <div className={`p-8 rounded-2xl ${darkMode ? 'bg-gray-700/60' : 'bg-white/60'} backdrop-blur-sm shadow-lg border border-cyan-400/20 hover:border-cyan-400/40 transition-all duration-300`}>
               <h3 className="text-2xl font-bold mb-6">Send Message</h3>
-              <form className="space-y-6">
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                if (!captchaValue) {
+                  alert('Please complete the security verification');
+                  return;
+                }
+                // Your existing form submit logic here
+              }} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <input
@@ -1951,12 +1965,42 @@ export default function ModernPortfolio() {
                     required
                   />
                 </div>
+                <div>
+                  <label className={`block text-sm font-medium mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-700'
+                    }`}>
+                    Security Verification *
+                  </label>
+                  <div className={`p-4 rounded-xl border transition-all duration-300 ${darkMode
+                    ? 'bg-gray-700/60 border-cyan-400/30 backdrop-blur-sm'
+                    : 'bg-gray-50/60 border-gray-300/60 backdrop-blur-sm'
+                    }`}>
+                    <div className="flex justify-center">
+                      <ReCAPTCHA
+                        sitekey="6LfJRaUrAAAAAMRlvaz_0Ef_tKqzVxgXKT3tfsBM"
+                        onChange={handleCaptcha}
+                        theme={darkMode ? "dark" : "light"}
+                      />
+                    </div>
+                    <p className={`text-xs mt-3 text-center ${darkMode ? 'text-gray-400' : 'text-gray-500'
+                      }`}>
+                      Protected by reCAPTCHA • Privacy & Terms
+                    </p>
+                  </div>
+                </div>
+
+                {/* Submit Button */}
                 <button
                   type="submit"
-                  className="w-full py-3 bg-gradient-to-r from-cyan-400 to-cyan-600 text-white rounded-lg hover:from-cyan-500 hover:to-cyan-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 font-semibold cursor-pointer"
+                  disabled={!captchaValue}
+                  className={`w-full py-3 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 font-semibold cursor-pointer shadow-lg ${!captchaValue
+                    ? darkMode
+                      ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-cyan-400 to-cyan-600 hover:from-cyan-500 hover:to-cyan-700 text-white hover:shadow-cyan-400/25'
+                    }`}
                 >
                   <Send size={20} />
-                  <span>Send Message</span>
+                  <span>{!captchaValue ? 'Complete Verification' : 'Send Message'}</span>
                 </button>
               </form>
             </div>
