@@ -64,7 +64,7 @@ const ThreeScene = ({ darkMode }) => {
 
     // Scene setup
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -74,71 +74,303 @@ const ThreeScene = ({ darkMode }) => {
     sceneRef.current = scene;
     rendererRef.current = renderer;
 
-    // Enhanced floating geometric shapes with interaction
-    const geometries = [
-      new THREE.OctahedronGeometry(1),
-      new THREE.TetrahedronGeometry(1),
-      new THREE.IcosahedronGeometry(1),
-      new THREE.DodecahedronGeometry(1),
-      new THREE.BoxGeometry(1, 1, 1),
-      new THREE.ConeGeometry(0.7, 1.5, 8)
+    // ===== COSMIC BACKGROUND =====
+    // Starfield particles
+    const starGeometry = new THREE.BufferGeometry();
+    const starCount = 2000;
+    const starPositions = new Float32Array(starCount * 3);
+    const starColors = new Float32Array(starCount * 3);
+
+    for (let i = 0; i < starCount; i++) {
+      const i3 = i * 3;
+      starPositions[i3] = (Math.random() - 0.5) * 2000;
+      starPositions[i3 + 1] = (Math.random() - 0.5) * 2000;
+      starPositions[i3 + 2] = (Math.random() - 0.5) * 1000;
+
+      // Star colors (cyan, blue, purple, white)
+      const colorChoice = Math.random();
+      if (colorChoice < 0.3) {
+        starColors[i3] = 0.0; starColors[i3 + 1] = 1.0; starColors[i3 + 2] = 1.0; // Cyan
+      } else if (colorChoice < 0.6) {
+        starColors[i3] = 0.5; starColors[i3 + 1] = 0.5; starColors[i3 + 2] = 1.0; // Purple-Blue
+      } else {
+        starColors[i3] = 1.0; starColors[i3 + 1] = 1.0; starColors[i3 + 2] = 1.0; // White
+      }
+    }
+
+    starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+    starGeometry.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+
+    const starMaterial = new THREE.PointsMaterial({
+      size: 2,
+      vertexColors: true,
+      transparent: true,
+      opacity: darkMode ? 0.8 : 0.6
+    });
+
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    scene.add(stars);
+
+    // ===== CENTRAL COMPUTING CORE =====
+    const centralCore = new THREE.Group();
+    
+    // Main glowing cube
+    const coreGeometry = new THREE.BoxGeometry(4, 4, 4);
+    const coreMaterial = new THREE.MeshPhongMaterial({
+      color: darkMode ? 0x00ffff : 0x0099cc,
+      transparent: true,
+      opacity: 0.7,
+      emissive: darkMode ? 0x003333 : 0x002222,
+      wireframe: true
+    });
+    const coreBox = new THREE.Mesh(coreGeometry, coreMaterial);
+    centralCore.add(coreBox);
+
+    // Inner solid cube
+    const innerCoreGeometry = new THREE.BoxGeometry(2, 2, 2);
+    const innerCoreMaterial = new THREE.MeshPhongMaterial({
+      color: darkMode ? 0x00ccff : 0x0088cc,
+      transparent: true,
+      opacity: 0.3,
+      emissive: darkMode ? 0x001122 : 0x000011
+    });
+    const innerCore = new THREE.Mesh(innerCoreGeometry, innerCoreMaterial);
+    centralCore.add(innerCore);
+
+    centralCore.position.set(0, 0, -20);
+    scene.add(centralCore);
+
+    // Orbiting binary code rings
+    const binaryRings = [];
+    for (let ring = 0; ring < 3; ring++) {
+      const ringGroup = new THREE.Group();
+      const radius = 8 + ring * 3;
+      
+      for (let i = 0; i < 24; i++) {
+        const angle = (i / 24) * Math.PI * 2;
+        const binaryGeometry = new THREE.PlaneGeometry(0.5, 0.8);
+        const binaryMaterial = new THREE.MeshBasicMaterial({
+          color: darkMode ? 0x00ffff : 0x0099cc,
+          transparent: true,
+          opacity: 0.6
+        });
+        const binaryMesh = new THREE.Mesh(binaryGeometry, binaryMaterial);
+        
+        binaryMesh.position.set(
+          Math.cos(angle) * radius,
+          Math.sin(angle) * radius * 0.5,
+          0
+        );
+        binaryMesh.lookAt(0, 0, 0);
+        
+        ringGroup.add(binaryMesh);
+      }
+      
+      ringGroup.position.copy(centralCore.position);
+      ringGroup.rotation.x = ring * 0.3;
+      scene.add(ringGroup);
+      binaryRings.push(ringGroup);
+    }
+
+    // ===== AI NEURAL NETWORK =====
+    const neuralNetwork = new THREE.Group();
+    const nodes = [];
+    const connections = [];
+
+    // Create neural nodes
+    for (let i = 0; i < 15; i++) {
+      const nodeGeometry = new THREE.SphereGeometry(0.3, 8, 8);
+      const nodeMaterial = new THREE.MeshPhongMaterial({
+        color: darkMode ? 0xff00ff : 0xcc00cc,
+        emissive: darkMode ? 0x330033 : 0x220022,
+        transparent: true,
+        opacity: 0.8
+      });
+      const node = new THREE.Mesh(nodeGeometry, nodeMaterial);
+      
+      node.position.set(
+        (Math.random() - 0.5) * 80,
+        (Math.random() - 0.5) * 60,
+        (Math.random() - 0.5) * 40
+      );
+      
+      nodes.push(node);
+      neuralNetwork.add(node);
+    }
+
+    // Create connections between nodes
+    for (let i = 0; i < nodes.length - 1; i++) {
+      if (Math.random() > 0.6) continue; // Don't connect all nodes
+      
+      const start = nodes[i].position;
+      const end = nodes[i + 1].position;
+      const distance = start.distanceTo(end);
+      
+      const connectionGeometry = new THREE.BufferGeometry();
+      connectionGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array([
+        start.x, start.y, start.z,
+        end.x, end.y, end.z
+      ]), 3));
+      
+      const connectionMaterial = new THREE.LineBasicMaterial({
+        color: darkMode ? 0x00ffff : 0x0099cc,
+        transparent: true,
+        opacity: 0.3
+      });
+      
+      const connection = new THREE.Line(connectionGeometry, connectionMaterial);
+      connections.push(connection);
+      neuralNetwork.add(connection);
+    }
+
+    scene.add(neuralNetwork);
+
+    // ===== DSA STRUCTURES (Floating Data Cubes) =====
+    const dataStructures = [];
+    const dsaShapes = [
+      { type: 'cube', size: 1.5 },
+      { type: 'pyramid', size: 2 },
+      { type: 'octahedron', size: 1.8 }
     ];
 
-    const shapes = [];
+    for (let i = 0; i < 12; i++) {
+      const shapeType = dsaShapes[Math.floor(Math.random() * dsaShapes.length)];
+      let geometry;
+      
+      switch (shapeType.type) {
+        case 'cube':
+          geometry = new THREE.BoxGeometry(shapeType.size, shapeType.size, shapeType.size);
+          break;
+        case 'pyramid':
+          geometry = new THREE.ConeGeometry(shapeType.size / 2, shapeType.size, 4);
+          break;
+        case 'octahedron':
+          geometry = new THREE.OctahedronGeometry(shapeType.size);
+          break;
+      }
 
-    for (let i = 0; i < 25; i++) {
-      const geometry = geometries[Math.floor(Math.random() * geometries.length)];
       const material = new THREE.MeshPhongMaterial({
-        color: darkMode ?
-          [0x00ffff, 0xff00ff, 0xffff00, 0x00ff00, 0xff6600][Math.floor(Math.random() * 5)] :
-          [0x0099cc, 0x9900cc, 0xcc9900, 0x00cc99, 0xcc4400][Math.floor(Math.random() * 5)],
+        color: darkMode ? 
+          [0x00ffff, 0xff00ff, 0xffff00][Math.floor(Math.random() * 3)] :
+          [0x0099cc, 0x9900cc, 0xcccc00][Math.floor(Math.random() * 3)],
         transparent: true,
-        opacity: 0.8,
-        emissive: darkMode ? 0x003333 : 0x001122,
+        opacity: 0.6,
+        emissive: darkMode ? 0x002222 : 0x001111,
         wireframe: Math.random() > 0.5
       });
 
       const mesh = new THREE.Mesh(geometry, material);
       mesh.position.set(
-        (Math.random() - 0.5) * 60,
-        (Math.random() - 0.5) * 60,
+        (Math.random() - 0.5) * 120,
+        (Math.random() - 0.5) * 80,
         (Math.random() - 0.5) * 60
       );
-      mesh.rotation.set(
+      
+      dataStructures.push({
+        mesh,
+        initialPosition: { ...mesh.position },
+        rotationSpeed: {
+          x: (Math.random() - 0.5) * 0.02,
+          y: (Math.random() - 0.5) * 0.02,
+          z: (Math.random() - 0.5) * 0.02
+        },
+        floatSpeed: Math.random() * 0.015 + 0.01,
+        floatRange: Math.random() * 6 + 2
+      });
+      
+      scene.add(mesh);
+    }
+
+    // ===== HOLOGRAPHIC PANELS =====
+    const holoPanels = [];
+    for (let i = 0; i < 6; i++) {
+      const panelGeometry = new THREE.PlaneGeometry(6, 4);
+      const panelMaterial = new THREE.MeshBasicMaterial({
+        color: darkMode ? 0x00ffff : 0x0099cc,
+        transparent: true,
+        opacity: 0.1,
+        side: THREE.DoubleSide
+      });
+      const panel = new THREE.Mesh(panelGeometry, panelMaterial);
+      
+      panel.position.set(
+        (Math.random() - 0.5) * 100,
+        (Math.random() - 0.5) * 60,
+        (Math.random() - 0.5) * 80
+      );
+      panel.rotation.set(
         Math.random() * Math.PI,
         Math.random() * Math.PI,
         Math.random() * Math.PI
       );
-      mesh.scale.setScalar(0.5 + Math.random() * 2);
-
-      scene.add(mesh);
-      shapes.push({
-        mesh,
-        initialPosition: { ...mesh.position },
+      
+      holoPanels.push({
+        mesh: panel,
         rotationSpeed: {
-          x: (Math.random() - 0.5) * 0.03,
-          y: (Math.random() - 0.5) * 0.03,
-          z: (Math.random() - 0.5) * 0.03
-        },
-        floatSpeed: Math.random() * 0.02 + 0.01,
-        floatRange: Math.random() * 8 + 3,
-        interactionRange: Math.random() * 5 + 2
+          x: (Math.random() - 0.5) * 0.01,
+          y: (Math.random() - 0.5) * 0.01,
+          z: (Math.random() - 0.5) * 0.01
+        }
       });
+      
+      scene.add(panel);
     }
 
-    // Enhanced lighting
-    const ambientLight = new THREE.AmbientLight(darkMode ? 0x404040 : 0x606060, 0.6);
+    // ===== SHOOTING STARS =====
+    const shootingStars = [];
+    const createShootingStar = () => {
+      const starGeometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(6); // Two points for a line
+      
+      const startX = (Math.random() - 0.5) * 200;
+      const startY = (Math.random() - 0.5) * 100;
+      const startZ = -100;
+      
+      positions[0] = startX; positions[1] = startY; positions[2] = startZ;
+      positions[3] = startX; positions[4] = startY; positions[5] = startZ;
+      
+      starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      
+      const starMaterial = new THREE.LineBasicMaterial({
+        color: darkMode ? 0x00ffff : 0x0099cc,
+        transparent: true,
+        opacity: 0.8
+      });
+      
+      const shootingStar = new THREE.Line(starGeometry, starMaterial);
+      scene.add(shootingStar);
+      
+      shootingStars.push({
+        mesh: shootingStar,
+        startTime: Date.now(),
+        duration: 2000,
+        startPos: { x: startX, y: startY, z: startZ },
+        endPos: { 
+          x: startX + (Math.random() - 0.5) * 40,
+          y: startY + (Math.random() - 0.5) * 30,
+          z: startZ + 60
+        }
+      });
+    };
+
+    // ===== ENHANCED LIGHTING =====
+    const ambientLight = new THREE.AmbientLight(darkMode ? 0x202040 : 0x404060, 0.4);
     scene.add(ambientLight);
 
-    const directionalLight1 = new THREE.DirectionalLight(darkMode ? 0x00ffff : 0x0099cc, 1);
-    directionalLight1.position.set(5, 5, 5);
-    scene.add(directionalLight1);
+    const mainLight = new THREE.DirectionalLight(darkMode ? 0x00ffff : 0x0099cc, 1);
+    mainLight.position.set(10, 10, 10);
+    scene.add(mainLight);
 
-    const directionalLight2 = new THREE.DirectionalLight(darkMode ? 0xff00ff : 0x9900cc, 0.5);
-    directionalLight2.position.set(-5, -5, -5);
-    scene.add(directionalLight2);
+    const accentLight = new THREE.DirectionalLight(darkMode ? 0xff00ff : 0x9900cc, 0.5);
+    accentLight.position.set(-10, -10, 5);
+    scene.add(accentLight);
 
-    camera.position.z = 35;
+    // Point lights for core
+    const coreLight = new THREE.PointLight(darkMode ? 0x00ffff : 0x0099cc, 1, 50);
+    coreLight.position.copy(centralCore.position);
+    scene.add(coreLight);
+
+    camera.position.set(0, 0, 40);
 
     // Mouse interaction
     const handleMouseMove = (event) => {
@@ -148,38 +380,91 @@ const ThreeScene = ({ darkMode }) => {
 
     window.addEventListener('mousemove', handleMouseMove);
 
-    // Animation loop
+    // ===== ANIMATION LOOP =====
     const animate = () => {
       animationIdRef.current = requestAnimationFrame(animate);
-
       const time = Date.now() * 0.001;
 
-      shapes.forEach((shape, index) => {
-        // Enhanced rotation with mouse interaction
-        shape.mesh.rotation.x += shape.rotationSpeed.x + mouseRef.current.x * 0.01;
-        shape.mesh.rotation.y += shape.rotationSpeed.y + mouseRef.current.y * 0.01;
-        shape.mesh.rotation.z += shape.rotationSpeed.z;
+      // Rotate central core
+      centralCore.rotation.x += 0.005;
+      centralCore.rotation.y += 0.01;
+      innerCore.rotation.x -= 0.008;
+      innerCore.rotation.y -= 0.012;
 
-        // Enhanced floating motion
-        shape.mesh.position.y = shape.initialPosition.y +
-          Math.sin(time * shape.floatSpeed + index) * shape.floatRange;
-        shape.mesh.position.x = shape.initialPosition.x +
-          Math.cos(time * shape.floatSpeed * 0.7 + index) * (shape.floatRange * 0.5);
-
-        // Mouse attraction effect
-        const mouseInfluence = 0.02;
-        shape.mesh.position.x += mouseRef.current.x * mouseInfluence * shape.interactionRange;
-        shape.mesh.position.y += mouseRef.current.y * mouseInfluence * shape.interactionRange;
-
-        // Pulsing scale effect
-        const baseScale = 0.5 + Math.random() * 2;
-        shape.mesh.scale.setScalar(baseScale + Math.sin(time * 2 + index) * 0.2);
+      // Animate binary rings
+      binaryRings.forEach((ring, index) => {
+        ring.rotation.z += 0.01 * (index + 1);
       });
 
-      // Camera gentle movement
-      camera.position.x += (mouseRef.current.x * 5 - camera.position.x) * 0.05;
-      camera.position.y += (-mouseRef.current.y * 5 - camera.position.y) * 0.05;
-      camera.lookAt(scene.position);
+      // Animate neural network nodes
+      nodes.forEach((node, index) => {
+        const pulseScale = 1 + Math.sin(time * 3 + index) * 0.2;
+        node.scale.setScalar(pulseScale);
+        
+        // Gentle floating
+        node.position.y += Math.sin(time + index) * 0.02;
+      });
+
+      // Animate DSA structures
+      dataStructures.forEach((structure, index) => {
+        structure.mesh.rotation.x += structure.rotationSpeed.x;
+        structure.mesh.rotation.y += structure.rotationSpeed.y;
+        structure.mesh.rotation.z += structure.rotationSpeed.z;
+
+        // Floating motion
+        structure.mesh.position.y = structure.initialPosition.y + 
+          Math.sin(time * structure.floatSpeed + index) * structure.floatRange;
+        structure.mesh.position.x = structure.initialPosition.x + 
+          Math.cos(time * structure.floatSpeed * 0.7 + index) * (structure.floatRange * 0.3);
+      });
+
+      // Animate holographic panels
+      holoPanels.forEach(panel => {
+        panel.mesh.rotation.x += panel.rotationSpeed.x;
+        panel.mesh.rotation.y += panel.rotationSpeed.y;
+        panel.mesh.rotation.z += panel.rotationSpeed.z;
+      });
+
+      // Create shooting stars periodically
+      if (Math.random() < 0.005) {
+        createShootingStar();
+      }
+
+      // Animate existing shooting stars
+      shootingStars.forEach((star, index) => {
+        const elapsed = Date.now() - star.startTime;
+        const progress = Math.min(elapsed / star.duration, 1);
+        
+        if (progress >= 1) {
+          scene.remove(star.mesh);
+          shootingStars.splice(index, 1);
+          return;
+        }
+        
+        const currentPos = {
+          x: star.startPos.x + (star.endPos.x - star.startPos.x) * progress,
+          y: star.startPos.y + (star.endPos.y - star.startPos.y) * progress,
+          z: star.startPos.z + (star.endPos.z - star.startPos.z) * progress
+        };
+        
+        const positions = star.mesh.geometry.attributes.position.array;
+        positions[0] = star.startPos.x; positions[1] = star.startPos.y; positions[2] = star.startPos.z;
+        positions[3] = currentPos.x; positions[4] = currentPos.y; positions[5] = currentPos.z;
+        star.mesh.geometry.attributes.position.needsUpdate = true;
+        
+        star.mesh.material.opacity = 0.8 * (1 - progress);
+      });
+
+      // Rotate star field slowly
+      stars.rotation.y += 0.0002;
+
+      // Parallax camera movement
+      const targetX = mouseRef.current.x * 8;
+      const targetY = -mouseRef.current.y * 6;
+      
+      camera.position.x += (targetX - camera.position.x) * 0.03;
+      camera.position.y += (targetY - camera.position.y) * 0.03;
+      camera.lookAt(0, 0, 0);
 
       renderer.render(scene, camera);
     };
@@ -272,7 +557,7 @@ const CustomCursor = ({ darkMode }) => {
           border: `2px solid ${darkMode ? '#00ffff' : '#0099cc'}`,
           borderRadius: '50%',
           transform: 'translate(-50%, -50%)',
-          transition: 'all 0.3s ease'
+          transition: 'all 0.2s ease'
         }}
       />
       <div
@@ -439,17 +724,17 @@ export default function ModernPortfolio() {
   }, [loading]);
 
   // Robot movement
-  useEffect(() => {
-    const moveRobot = () => {
-      setRobotPosition(prev => ({
-        x: Math.max(10, Math.min(90, prev.x + (Math.random() - 0.5) * 20)),
-        y: Math.max(10, Math.min(90, prev.y + (Math.random() - 0.5) * 20))
-      }));
-    };
+  // useEffect(() => {
+  //   const moveRobot = () => {
+  //     setRobotPosition(prev => ({
+  //       x: Math.max(10, Math.min(90, prev.x + (Math.random() - 0.5) * 20)),
+  //       y: Math.max(10, Math.min(90, prev.y + (Math.random() - 0.5) * 20))
+  //     }));
+  //   };
 
-    const interval = setInterval(moveRobot, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  //   const interval = setInterval(moveRobot, 5000);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   const handleChatSubmit = (e) => {
     e.preventDefault();
@@ -487,9 +772,9 @@ export default function ModernPortfolio() {
       if (lowerMessage.includes('help') || lowerMessage.includes('assist') || lowerMessage.includes('support')) {
         return "I'm here to assist you! Just ask about Tanvir's skills, projects, experience, or anything else related to his professional journey. How can I help you today? 🤖";
       }
-     else{
+      else {
         return "I'm not sure about that. Can you ask something else related to Tanvir's skills, projects, or experience? 🤔";
-    }
+      }
       // Default responses
       const responses = [
         "Tanvir is a passionate Jr. Software Engineer with expertise in modern web technologies and a strong focus on innovation! 🌟",
@@ -570,13 +855,16 @@ export default function ModernPortfolio() {
       {/* PUBG-Style Floating Robot */}
       <div
         ref={robotRef}
-        className="fixed z-40 transition-all duration-[3000ms] cursor-pointer group"
-        style={{
-          left: `${robotPosition.x}%`,
-          top: `${robotPosition.y}%`,
-          transform: 'translate(-50%, -50%)'
-        }}
+        className="fixed bottom-4 right-4 z-40 cursor-pointer group 
+             scale-75 md:scale-90 lg:scale-100 transition-transform duration-300"
         onClick={() => setChatOpen(!chatOpen)}
+      // className="fixed z-40 transition-all duration-[3000ms] cursor-pointer group"
+      // style={{
+      //   left: `${robotPosition.x}%`,
+      //   top: `${robotPosition.y}%`,
+      //   transform: 'translate(-50%, -50%)'
+      // }}
+      // onClick={() => setChatOpen(!chatOpen)}
       >
         <div className="relative">
           {/* PUBG-Style Robot Head */}
@@ -781,7 +1069,7 @@ export default function ModernPortfolio() {
             className="md:hidden p-2 rounded-full bg-cyan-400 text-white cursor-pointer"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            <Menu size={16} />
+            {mobileMenuOpen ? <X size={16} /> : <Menu size={16} />}
           </button>
         </div>
       </nav>
@@ -801,7 +1089,8 @@ export default function ModernPortfolio() {
               <button
                 key={id}
                 onClick={() => scrollToSection(id)}
-                className="flex items-center space-x-3 text-2xl font-semibold hover:text-cyan-400 transition-colors cursor-pointer"
+                className={`flex items-center space-x-3 text-2xl font-semibold transition-colors cursor-pointer ${activeSection === id ? 'text-cyan-400' : darkMode ? 'text-gray-300' : 'text-gray-600'
+                  }`}
               >
                 <Icon size={24} />
                 <span>{label}</span>
@@ -869,9 +1158,9 @@ export default function ModernPortfolio() {
           }
         `}</style>
 
-        <div className="relative z-20 max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="text-center lg:text-left">
-            <h1 className={`text-5xl lg:text-7xl font-bold mb-6 bg-clip-text text-transparent ${darkMode
+        <div className="relative z-20 max-w-6xl mx-auto px-6 flex flex-col lg:flex-row gap-12 items-center">
+          <div className="text-center lg:text-left order-1">
+            <h1 className={`mt-20 lg:mt-0 text-5xl lg:text-7xl font-bold mb-6 bg-clip-text text-transparent ${darkMode
               ? 'bg-gradient-to-r from-white via-cyan-400 to-cyan-600'
               : 'bg-gradient-to-r from-cyan-600 via-cyan-500 to-gray-700'
               }`}>
@@ -939,7 +1228,7 @@ export default function ModernPortfolio() {
             </div>
           </div>
 
-          <div className="relative opacity-0 animate-fadeIn" style={{ animationDelay: '3s', animationFillMode: 'forwards' }}>
+          <div className="relative order-2 lg:order-2 opacity-0 animate-fadeIn" style={{ animationDelay: '3s', animationFillMode: 'forwards' }}>
             <div className="relative w-80 h-80 mx-auto group">
               {/* 3D Floating Profile Container */}
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-400 to-cyan-600 animate-spin-slow"></div>
