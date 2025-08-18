@@ -1176,8 +1176,9 @@ export default function ModernPortfolio() {
             </h2>
             <p className={`text-xl mb-8 leading-relaxed ${darkMode ? 'text-gray-300' : 'text-gray-700'
               } opacity-0 animate-fadeIn`} style={{ animationDelay: '4s', animationFillMode: 'forwards' }}>
-              Passionate about building scalable web applications with .NET Core, Angular, and modern technologies.
-              Specialized in creating robust, secure, and efficient solutions.
+              Specializing in full-stack development with <strong>.NET Core</strong>, <strong>Angular</strong> and modern technologies.
+              Passionate about <strong>AI/ML</strong> and related problem-solving.
+              With a strong focus on system architecture and building scalable, secure and impactful Solutions.
             </p>
 
             <div className="flex flex-wrap gap-4 justify-center lg:justify-start mb-8 opacity-0 animate-fadeIn" style={{ animationDelay: '4.5s', animationFillMode: 'forwards' }}>
@@ -1190,7 +1191,7 @@ export default function ModernPortfolio() {
               </button>
               <button
                 onClick={() => {
-                  window.open('/resume/MD_Tanvir_hossain.pdf', '_blank');
+                  window.open('/resume/MD_Tanvir_Hossain.pdf', '_blank');
                 }}
                 className={`relative px-8 py-3 border-2 border-cyan-400 rounded-full flex items-center space-x-2 overflow-hidden transition-all duration-300 hover:bg-white/10 hover:-translate-y-0.5 group cursor-pointer ${darkMode
                   ? 'border-2 border-cyan-400 text-white'
