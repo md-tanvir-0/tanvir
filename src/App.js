@@ -819,21 +819,55 @@ export default function ModernPortfolio() {
           <div className="relative mb-8">
             <div className="w-32 h-32 mx-auto border-4 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-4xl">🤖</span>
+              <div className="flex flex-col justify-center items-center h-screen bg-gray-900">
+                {/* Robot Head */}
+                <div className="relative w-32 h-32 rounded-full bg-gray-800 flex justify-center items-center shadow-[0_0_50px_cyan] animate-bounce">
+                  {/* Eyes */}
+                  <div className="absolute top-1/3 flex space-x-6">
+                    <div className="w-6 h-6 bg-cyan-400 rounded-full animate-pulse shadow-[0_0_10px_cyan]"></div>
+                    <div className="w-6 h-6 bg-cyan-400 rounded-full animate-pulse shadow-[0_0_10px_cyan] animate-delay-200"></div>
+                  </div>
+
+                  {/* Antenna */}
+                  <div className="absolute -top-6 w-2 h-6 bg-cyan-400 rounded-full shadow-[0_0_10px_cyan] animate-bounce"></div>
+                </div>
+
+                {/* Floating Particles */}
+                {/* <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-full h-full pointer-events-none overflow-hidden">
+        {[...Array(10)].map((_, i) => (
+          <span
+            key={i}
+            className={`absolute w-2 h-2 bg-cyan-400 rounded-full animate-bounce-slow`}
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 2}s`,
+            }}
+          ></span>
+        ))}
+      </div> */}
+
+                {/* Loading Text */}
+                <div className="mt-12 flex items-center justify-center space-x-2 text-cyan-400 text-xl font-mono">
+                  <span>Loading</span>
+                  <div className="flex space-x-1">
+                    {[0, 1, 2].map((i) => (
+                      <span
+                        key={i}
+                        className="w-3 h-3 bg-cyan-400 rounded-full animate-pulse inline-block"
+                        style={{ animationDelay: `${i * 0.2}s` }}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+              </div>
             </div>
           </div>
-          <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'} mb-4`}>
+          {/* <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'} mb-4`}>
             Loading Portfolio...
-          </h2>
-          <div className="flex space-x-1 justify-center">
-            {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                className="w-3 h-3 bg-cyan-400 rounded-full animate-pulse"
-                style={{ animationDelay: `${i * 0.2}s` }}
-              />
-            ))}
-          </div>
+          </h2> */}
+
         </div>
       </div>
     );
