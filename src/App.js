@@ -1037,7 +1037,7 @@ export default function ModernPortfolio() {
         ? 'bg-gray-800/80 border-gray-700'
         : 'bg-white/80 border-gray-200'
         }`}>
-        <div className="flex items-center space-x-6">
+        <div className="flex items-center md:space-x-6">
           <div className="hidden md:flex items-center space-x-6">
             {[
               { id: 'home', icon: User, label: 'Home' },
@@ -1071,7 +1071,7 @@ export default function ModernPortfolio() {
           </button>
 
           <button
-            className="md:hidden p-2 rounded-full bg-cyan-400 text-white cursor-pointer"
+            className="md:hidden ml-6 p-2 rounded-full bg-cyan-400 text-white cursor-pointer"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X size={16} /> : <Menu size={16} />}
@@ -1081,8 +1081,16 @@ export default function ModernPortfolio() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className={`fixed inset-0 z-40 ${darkMode ? 'bg-gray-900/95' : 'bg-white/95'} backdrop-blur-md`}>
-          <div className="flex flex-col items-center justify-center h-full space-y-8">
+        <div
+          className={`fixed inset-0 z-40 transition-all duration-500 ease-in-out ${darkMode ? 'bg-gray-900/95' : 'bg-white/95'
+            } backdrop-blur-md ${mobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+          style={{
+            transform: mobileMenuOpen ? 'translateX(0)' : 'translateX(100%)',
+          }}
+        >
+          <div className={`flex flex-col items-center justify-center h-full space-y-8 transition-all duration-700 ${mobileMenuOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+            }`}>
             {[
               { id: 'home', icon: User, label: 'Home' },
               { id: 'about', icon: User, label: 'About' },
@@ -1090,12 +1098,17 @@ export default function ModernPortfolio() {
               { id: 'experience', icon: Briefcase, label: 'Experience' },
               { id: 'projects', icon: Target, label: 'Projects' },
               { id: 'contact', icon: Mail, label: 'Contact' }
-            ].map(({ id, icon: Icon, label }) => (
+            ].map(({ id, icon: Icon, label }, index) => (
               <button
                 key={id}
                 onClick={() => scrollToSection(id)}
-                className={`flex items-center space-x-3 text-2xl font-semibold transition-colors cursor-pointer ${activeSection === id ? 'text-cyan-400' : darkMode ? 'text-gray-300' : 'text-gray-600'
-                  }`}
+                className={`flex items-center space-x-3 text-2xl font-semibold transition-all duration-300 cursor-pointer ${activeSection === id ? 'text-cyan-400' : darkMode ? 'text-gray-300' : 'text-gray-600'
+                  } transform hover:scale-110`}
+                style={{
+                  animation: mobileMenuOpen
+                    ? `slideInFromRight 0.5s ease-out ${index * 0.1}s both`
+                    : 'none'
+                }}
               >
                 <Icon size={24} />
                 <span>{label}</span>
@@ -1104,6 +1117,30 @@ export default function ModernPortfolio() {
           </div>
         </div>
       )}
+      <style jsx>{`
+  @keyframes slideInFromRight {
+    from {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes animate-float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(10deg); }
+  }
+  
+  @keyframes particleFloat {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100vh) scale(1); opacity: 0; }
+  }
+`}</style>
 
       {/* Scroll to Top */}
       {showScrollTop && (
@@ -1707,10 +1744,13 @@ export default function ModernPortfolio() {
       <SectionSeparator darkMode={darkMode} />
 
       {/* Experience Section */}
-      <section id="experience" className={`py-20 relative ${darkMode ?
-        'bg-gradient-to-br from-black/40 via-gray-900/60 to-black/40' :
-        'bg-gradient-to-br from-white/40 via-gray-50/60 to-white/40'
-        } backdrop-blur-sm`}>
+      <section
+        id="experience"
+        className={`py-20 relative ${darkMode
+          ? 'bg-gradient-to-br from-black/40 via-gray-900/60 to-black/40'
+          : 'bg-gradient-to-br from-white/40 via-gray-50/60 to-white/40'
+          } backdrop-blur-sm`}
+      >
         <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-cyan-400 to-cyan-600 bg-clip-text text-transparent">
             Work Experience
@@ -1729,8 +1769,8 @@ export default function ModernPortfolio() {
                     'Spearheaded frontend development using Angular v19 with reusable architecture',
                     'Developed scalable .NET Core backend APIs using N-Tier architecture and SOLID principles',
                     'Built TPMS with AI/ML integration for real-time activity monitoring and NLP-based summarization',
-                    'Implemented JWT authorization, lazy loading and client-side caching for optimized performance'
-                  ]
+                    'Implemented JWT authorization, lazy loading and client-side caching for optimized performance',
+                  ],
                 },
                 {
                   title: 'Intern',
@@ -1739,31 +1779,70 @@ export default function ModernPortfolio() {
                   achievements: [
                     'Contributed to R&D for TRP System using ASP.NET Core and PostgreSQL',
                     'Enhanced UI/UX with responsive design using React and Tailwind CSS',
-                    'Collaborated on joint initiative between BSCL & D2A2I for analytics system development'
-                  ]
-                }
+                    'Collaborated on joint initiative between BSCL & D2A2I for analytics system development',
+                    { text: 'View Project', url: 'https://d2a2i.aiub.edu/project-bscl.html' }
+                  ],
+                },
+                {
+                  title: 'Trainee',
+                  company: 'EDGE, Bangladesh',
+                  duration: 'December 2024 – January 2025',
+                  achievements: [
+                    'Participated in a hands-on program focusing on modern web development practices',
+                    'Built projects using React and Node.js with emphasis on full-stack integration',
+                    'Collaborated with peers to solve real-world software problems through team-based challenges',
+                    { text: 'View Certificate', url: 'https://training.edge.gov.bd/storage/certificate/student-training/certificate_679af0a3dbdc02.01897037.pdf' }
+                  ],
+                },
               ].map((job, index) => (
                 <div key={index} className="relative flex items-start">
                   {/* Timeline Dot */}
                   <div className="absolute left-6 top-6 w-4 h-4 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-full border-4 border-white dark:border-gray-900 shadow-lg z-10"></div>
 
                   {/* Content Card */}
-                  <div className={`ml-20 p-8 rounded-2xl ${darkMode ? 'bg-gray-700/60' : 'bg-white/60'} backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-cyan-400/20 hover:border-cyan-400/40 transform hover:scale-[1.02] cursor-pointer w-full`}>
+                  <div
+                    className={`ml-20 p-8 rounded-2xl ${darkMode ? 'bg-gray-700/60' : 'bg-white/60'
+                      } backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-cyan-400/20 hover:border-cyan-400/40 transform hover:scale-[1.02] cursor-pointer w-full`}
+                  >
                     <div>
                       <h3 className="text-2xl font-bold text-cyan-400 mb-2">{job.title}</h3>
                       <h4 className="text-xl font-semibold mb-2">{job.company}</h4>
-                      <p className={`text-sm mb-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                      <p
+                        className={`text-sm mb-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'
+                          }`}
+                      >
                         <Calendar size={16} className="inline mr-2" />
                         {job.duration}
                       </p>
                       <ul className="space-y-2">
-                        {job.achievements.map((achievement, idx) => (
-                          <li key={idx} className={`flex items-start ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                            <span className="text-cyan-400 mr-2 mt-1">▶</span>
-                            <span>{achievement}</span>
-                          </li>
-                        ))}
+                        {job.achievements.map((achievement, idx) =>
+                          typeof achievement === 'string' ? (
+                            <li
+                              key={idx}
+                              className={`flex items-start ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}
+                            >
+                              <span className="text-cyan-400 mr-2 mt-1">▶</span>
+                              <span>{achievement}</span>
+                            </li>
+                          ) : (
+                            <li
+                              key={idx}
+                              className={`flex items-start ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}
+                            >
+                              <span className="text-cyan-400 mr-2 mt-1">▶</span>
+                              <a
+                                href={achievement.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-cyan-500 underline"
+                              >
+                                {achievement.text}
+                              </a>
+                            </li>
+                          )
+                        )}
                       </ul>
+
                     </div>
                   </div>
                 </div>
@@ -1772,6 +1851,7 @@ export default function ModernPortfolio() {
           </div>
         </div>
       </section>
+
 
       {/* Section Separator */}
       <SectionSeparator darkMode={darkMode} />
