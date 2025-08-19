@@ -1286,7 +1286,7 @@ export default function ModernPortfolio() {
             <div className="flex justify-center lg:justify-start space-x-6 opacity-0 animate-fadeIn" style={{ animationDelay: '5s', animationFillMode: 'forwards' }}>
               {[
                 { icon: Github, href: 'https://github.com/md-tanvir-0', label: 'GitHub' },
-                { icon: Linkedin, href: 'https://linkedin.com/in/md-tanvir-0', label: 'LinkedIn' },
+                { icon: Linkedin, href: 'https://www.linkedin.com/in/mdtanvir0/', label: 'LinkedIn' },
                 { icon: Mail, href: 'mailto:tanviraiub321@gmail.com', label: 'Email' },
                 { icon: Phone, href: 'tel:+8801707386142', label: 'Phone' }
               ].map(({ icon: Icon, href, label }) => (
@@ -2001,7 +2001,7 @@ export default function ModernPortfolio() {
                   { icon: Mail, label: 'Email', value: 'tanviraiub321@gmail.com', href: 'mailto:tanviraiub321@gmail.com' },
                   { icon: Phone, label: 'Phone', value: '+880 1707 386142', href: 'tel:+8801707386142' },
                   { icon: MapPin, label: 'Location', value: 'Dhaka, Bangladesh', href: '#' },
-                  { icon: Linkedin, label: 'LinkedIn', value: 'md-tanvir-0', href: 'https://linkedin.com/in/md-tanvir-0' },
+                  { icon: Linkedin, label: 'LinkedIn', value: 'md-tanvir-0', href: 'https://www.linkedin.com/in/mdtanvir0/' },
                   { icon: Github, label: 'GitHub', value: 'md-tanvir-0', href: 'https://github.com/md-tanvir-0' }
                 ].map(({ icon: Icon, label, value, href }) => (
                   <div key={label} className={`flex items-center space-x-4 p-4 rounded-xl ${darkMode ? 'bg-gray-700/60 hover:bg-gray-600/60' : 'bg-white/60 hover:bg-gray-50/60'} backdrop-blur-sm transition-all duration-300 transform hover:scale-105 cursor-pointer border border-cyan-400/20 hover:border-cyan-400/40`}>
