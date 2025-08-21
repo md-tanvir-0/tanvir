@@ -29,6 +29,7 @@ import { FaLaptopCode, FaBrain, FaCode, FaLightbulb, FaUsers, FaRocket } from "r
 import * as THREE from 'three';
 import {
   User,
+  Home,
   Code,
   Briefcase,
   Mail,
@@ -1074,7 +1075,7 @@ export default function ModernPortfolio() {
         <div className="flex items-center md:space-x-6">
           <div className="hidden md:flex items-center space-x-6">
             {[
-              { id: 'home', icon: User, label: 'Home' },
+              { id: 'home', icon: Home, label: 'Home' },
               { id: 'about', icon: User, label: 'About' },
               { id: 'skills', icon: Code, label: 'Skills' },
               { id: 'experience', icon: Briefcase, label: 'Experience' },
@@ -1126,7 +1127,7 @@ export default function ModernPortfolio() {
           <div className={`flex flex-col items-center justify-center h-full space-y-8 transition-all duration-700 ${mobileMenuOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
             }`}>
             {[
-              { id: 'home', icon: User, label: 'Home' },
+              { id: 'home', icon: Home, label: 'Home' },
               { id: 'about', icon: User, label: 'About' },
               { id: 'skills', icon: Code, label: 'Skills' },
               { id: 'experience', icon: Briefcase, label: 'Experience' },
