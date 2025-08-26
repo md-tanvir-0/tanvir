@@ -680,9 +680,10 @@ export default function ModernPortfolio() {
       setShowScrollTop(scrollY > 500);
 
       // Parallax effect for hero section
-      if (heroRef.current) {
+      if (heroRef.current && window.innerWidth >= 768) {
         heroRef.current.style.transform = `translateY(${scrollY * 0.5}px)`;
       }
+
 
       // Update active section
       const sections = ['home', 'about', 'skills', 'experience', 'projects', 'contact'];
@@ -1235,9 +1236,9 @@ export default function ModernPortfolio() {
           }
         `}</style>
 
-        <div className="relative z-20 max-w-6xl mx-auto px-6 flex flex-col lg:flex-row gap-12 items-center">
+        <div className="relative z-20 max-w-6xl mx-auto px-6 flex flex-col-reverse lg:flex-row gap-12 items-center">
           <div className="text-center lg:text-left order-1">
-            <h1 className={`mt-20 lg:mt-0 text-5xl lg:text-7xl font-bold mb-6 bg-clip-text text-transparent ${darkMode
+            <h1 className={`mt-6 lg:mt-0 text-5xl lg:text-7xl font-bold mb-4 bg-clip-text text-transparent ${darkMode
               ? 'bg-gradient-to-r from-white via-cyan-400 to-cyan-600'
               : 'bg-gradient-to-r from-cyan-600 via-cyan-500 to-gray-700'
               }`}>
@@ -1308,7 +1309,7 @@ export default function ModernPortfolio() {
             </div>
           </div>
 
-          <div className="relative order-2 lg:order-2 opacity-0 animate-fadeIn" style={{ animationDelay: '3s', animationFillMode: 'forwards' }}>
+          <div className="relative order-2 lg:order-2 mt-24 md:mt-0 opacity-0 animate-fadeIn" style={{ animationDelay: '3s', animationFillMode: 'forwards' }}>
             <div className="relative w-80 h-80 mx-auto group">
               {/* 3D Floating Profile Container */}
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-400 to-cyan-600 animate-spin-slow"></div>
@@ -1836,7 +1837,7 @@ export default function ModernPortfolio() {
 
                   {/* Content Card */}
                   <div
-                    className={`ml-20 p-8 rounded-2xl ${darkMode ? 'bg-gray-700/60' : 'bg-white/60'
+                    className={`ml-12 md:ml-20 p-8 rounded-2xl ${darkMode ? 'bg-gray-700/60' : 'bg-white/60'
                       } backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-cyan-400/20 hover:border-cyan-400/40 transform hover:scale-[1.02] cursor-pointer w-full`}
                   >
                     <div>
@@ -1913,7 +1914,7 @@ export default function ModernPortfolio() {
                 title: 'TPMS',
                 description: 'Task Progress Management System with AI/ML integration for activity monitoring',
                 tech: ['Angular', '.NET Core', 'AI/ML', 'NLP'],
-                icon: '🤖'
+                icon: '📅'
               },
               {
                 title: 'RentEase',
@@ -1932,14 +1933,15 @@ export default function ModernPortfolio() {
               {
                 title: 'FinTech',
                 description: 'Mobile Banking System with NestJS backend and NextJS frontend',
-                tech: ['NestJS', 'NextJS', 'TypeScript', 'MongoDB'],
+                tech: ['NestJS', 'NextJS', 'PostgreSQL'],
                 icon: '💳',
                 github: 'https://github.com/md-tanvir-0/Adv-WebTech/tree/main/mobile-banking-management-system'
               },
               {
-                title: 'Plant Disease Detection',
-                description: 'ML/DL hybrid model for plant disease detection (Bachelor\'s Thesis)',
-                tech: ['Python', 'Machine Learning', 'Deep Learning', 'TensorFlow'],
+                title: "Agro-Farming & Event Management System",
+                description: "Developed a web app with PHP, Ajax, and jQuery, integrating Bootstrap for responsive UI.",
+                tech: ['PHP', 'Ajax', 'jQuery', 'Bootstrap'],
+                github: 'Event Management: https://github.com/md-tanvir-0/Event_Management_System',
                 icon: '🌱'
               }
             ].map((project, index) => (
