@@ -54,7 +54,7 @@ import {
   Award,
   Target
 } from 'lucide-react';
-
+import AICapabilitiesChart from './AICapabilitiesChart';
 const ThreeScene = ({ darkMode }) => {
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
@@ -1457,8 +1457,9 @@ export default function ModernPortfolio() {
                           <div className="absolute inset-4 border border-cyan-300 rounded-full animate-spin-reverse opacity-20"></div>
 
                           {/* Avatar */}
-                          <div className="absolute inset-8 bg-gradient-to-br from-cyan-400/30 to-cyan-400/30 rounded-full flex items-center justify-center text-6xl backdrop-blur-sm">
-                            👨‍💻
+                          {/* AI Capabilities Chart */}
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <AICapabilitiesChart darkMode={darkMode} />
                           </div>
 
                           {/* Data Points */}
