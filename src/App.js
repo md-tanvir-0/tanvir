@@ -3,9 +3,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import {
   SiReact,
   SiNodedotjs,
-  SiTensorflow,
   SiDotnet,
-  SiCsharp,
   SiPhp,
   SiCplusplus,
   SiNestjs,
@@ -21,7 +19,6 @@ import {
   SiGit,
   SiDocker,
   SiKubernetes,
-  SiSwagger,
   SiPostman,
   SiJira,
 } from "react-icons/si";
@@ -41,7 +38,6 @@ import {
   Moon,
   Menu,
   X,
-  MessageCircle,
   Send,
   ChevronUp,
   Download,
@@ -64,6 +60,7 @@ const ThreeScene = ({ darkMode }) => {
 
   useEffect(() => {
     if (!mountRef.current) return;
+    const mountNode = mountRef.current;
 
     // Scene setup
     const scene = new THREE.Scene();
@@ -207,7 +204,6 @@ const ThreeScene = ({ darkMode }) => {
 
       const start = nodes[i].position;
       const end = nodes[i + 1].position;
-      const distance = start.distanceTo(end);
 
       const connectionGeometry = new THREE.BufferGeometry();
       connectionGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array([
@@ -249,6 +245,9 @@ const ThreeScene = ({ darkMode }) => {
           break;
         case 'octahedron':
           geometry = new THREE.OctahedronGeometry(shapeType.size);
+          break;
+        default:
+          geometry = new THREE.BoxGeometry(shapeType.size, shapeType.size, shapeType.size);
           break;
       }
 
@@ -490,8 +489,8 @@ const ThreeScene = ({ darkMode }) => {
       if (animationIdRef.current) {
         cancelAnimationFrame(animationIdRef.current);
       }
-      if (mountRef.current && renderer.domElement) {
-        mountRef.current.removeChild(renderer.domElement);
+      if (mountNode && renderer.domElement) {
+        mountNode.removeChild(renderer.domElement);
       }
       renderer.dispose();
     };
@@ -662,10 +661,48 @@ export default function ModernPortfolio() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const robotRef = useRef(null);
   const heroRef = useRef(null);
-  const [robotPosition, setRobotPosition] = useState({ x: 50, y: 50 });
+  const recaptchaRef = useRef(null);
   const [captchaValue, setCaptchaValue] = useState(null);
+  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
+  const [formStatus, setFormStatus] = useState('idle'); // 'idle' | 'submitting' | 'success' | 'error'
   const handleCaptcha = (value) => {
     setCaptchaValue(value);
+  };
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+  const handleContactSubmit = async (e) => {
+    e.preventDefault();
+    if (!captchaValue) {
+      alert('Please complete the security verification');
+      return;
+    }
+    setFormStatus('submitting');
+    try {
+      const response = await fetch('https://formsubmit.co/ajax/tanviraiub321@gmail.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+        }),
+      });
+      if (response.ok) {
+        setFormStatus('success');
+        setFormData({ name: '', email: '', subject: '', message: '' });
+        setCaptchaValue(null);
+        if (recaptchaRef.current) {
+          recaptchaRef.current.reset();
+        }
+      } else {
+        setFormStatus('error');
+      }
+    } catch {
+      setFormStatus('error');
+    }
   };
   // Loading effect
   useEffect(() => {
@@ -782,16 +819,6 @@ export default function ModernPortfolio() {
       else {
         return "I'm not sure about that. Can you ask something else related to Tanvir's skills, projects, or experience? 🤔";
       }
-      // Default responses
-      const responses = [
-        "Tanvir is a passionate Jr. Software Engineer with expertise in modern web technologies and a strong focus on innovation! 🌟",
-        "He's skilled in full-stack development with .NET Core backend and Angular/React frontend technologies! ⚡",
-        "His projects showcase AI/ML integration, clean architecture, and scalable solutions! 🤖",
-        "Want to know more about his specific achievements or technical expertise? Just ask! 💡",
-        "He's experienced in agile development, SOLID principles, and building enterprise-level applications! 🏗️"
-      ];
-
-      return responses[Math.floor(Math.random() * responses.length)];
     };
 
     setTimeout(() => {
@@ -2030,18 +2057,24 @@ export default function ModernPortfolio() {
 
             <div className={`p-8 rounded-2xl ${darkMode ? 'bg-gray-700/60' : 'bg-white/60'} backdrop-blur-sm shadow-lg border border-cyan-400/20 hover:border-cyan-400/40 transition-all duration-300`}>
               <h3 className="text-2xl font-bold mb-6">Send Message</h3>
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                if (!captchaValue) {
-                  alert('Please complete the security verification');
-                  return;
-                }
-                // Your existing form submit logic here
-              }} className="space-y-6">
+              {formStatus === 'success' && (
+                <div className="mb-4 p-4 rounded-xl bg-green-500/20 border border-green-400/40 text-green-400 text-center font-semibold">
+                  ✅ Message sent successfully! I'll get back to you soon.
+                </div>
+              )}
+              {formStatus === 'error' && (
+                <div className="mb-4 p-4 rounded-xl bg-red-500/20 border border-red-400/40 text-red-400 text-center font-semibold">
+                  ❌ Failed to send message. Please try again or email me directly.
+                </div>
+              )}
+              <form onSubmit={handleContactSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <input
                       type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleFormChange}
                       placeholder="Your Name"
                       className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all duration-300 backdrop-blur-sm ${darkMode
                         ? 'bg-gray-600/60 border-gray-500/60 text-white placeholder-gray-400'
@@ -2053,6 +2086,9 @@ export default function ModernPortfolio() {
                   <div>
                     <input
                       type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleFormChange}
                       placeholder="Your Email"
                       className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all duration-300 backdrop-blur-sm ${darkMode
                         ? 'bg-gray-600/60 border-gray-500/60 text-white placeholder-gray-400'
@@ -2065,6 +2101,9 @@ export default function ModernPortfolio() {
                 <div>
                   <input
                     type="text"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleFormChange}
                     placeholder="Subject"
                     className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all duration-300 backdrop-blur-sm ${darkMode
                       ? 'bg-gray-600/60 border-gray-500/60 text-white placeholder-gray-400'
@@ -2076,6 +2115,9 @@ export default function ModernPortfolio() {
                 <div>
                   <textarea
                     rows={5}
+                    name="message"
+                    value={formData.message}
+                    onChange={handleFormChange}
                     placeholder="Your Message"
                     className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all duration-300 resize-none backdrop-blur-sm ${darkMode
                       ? 'bg-gray-600/60 border-gray-500/60 text-white placeholder-gray-400'
@@ -2095,6 +2137,7 @@ export default function ModernPortfolio() {
                     }`}>
                     <div className="flex justify-center">
                       <ReCAPTCHA
+                        ref={recaptchaRef}
                         sitekey="6LdjR6krAAAAAFl75pae--QLAMqUBigqsJWwMdFU"
                         onChange={handleCaptcha}
                         theme={darkMode ? "dark" : "light"}
@@ -2110,8 +2153,8 @@ export default function ModernPortfolio() {
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  disabled={!captchaValue}
-                  className={`w-full py-3 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 font-semibold cursor-pointer shadow-lg ${!captchaValue
+                  disabled={!captchaValue || formStatus === 'submitting'}
+                  className={`w-full py-3 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 font-semibold cursor-pointer shadow-lg ${!captchaValue || formStatus === 'submitting'
                     ? darkMode
                       ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'
@@ -2119,7 +2162,7 @@ export default function ModernPortfolio() {
                     }`}
                 >
                   <Send size={20} />
-                  <span>{!captchaValue ? 'Complete Verification' : 'Send Message'}</span>
+                  <span>{formStatus === 'submitting' ? 'Sending...' : !captchaValue ? 'Complete Verification' : 'Send Message'}</span>
                 </button>
               </form>
             </div>

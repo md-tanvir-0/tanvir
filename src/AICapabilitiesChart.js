@@ -36,7 +36,6 @@ const AICapabilitiesChart = ({ darkMode }) => {
       pulsePhase += 0.02;
 
       const baseColor = darkMode ? '#00ffff' : '#0099cc';
-      const bgColor = darkMode ? 'rgba(0, 255, 255, 0.1)' : 'rgba(0, 153, 204, 0.1)';
 
       // Draw background grid
       ctx.strokeStyle = darkMode ? 'rgba(0, 255, 255, 0.15)' : 'rgba(0, 153, 204, 0.15)';
